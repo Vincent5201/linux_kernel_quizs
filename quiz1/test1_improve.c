@@ -14,7 +14,8 @@ void list_add(node_t **list, node_t *node_t)
 {
     node_t->next = *list;
     node_t->last = NULL;
-    (*list)->last = node_t;
+    if (*list)
+        (*list)->last = node_t;
     *list = node_t;
 }
 
@@ -118,18 +119,18 @@ void quick_sort_medium3(node_t **list)
         if (L != R) {
             node_t *pivot;
             node_t *p;
-            if (L->next == R) {
+            long v1, v2, v3;
+            node_t *mid = list_find_mid(L, R);
+            v1 = L->value;
+            v2 = mid->value;
+            v3 = R->value;
+
+            if (R == mid) {
                 pivot = L;
                 p = L->next;
                 pivot->next = NULL;
                 value = pivot->value;
             } else {
-                long v1, v2, v3;
-                node_t *mid = list_find_mid(L, R);
-                v1 = L->value;
-                v2 = mid->value;
-                v3 = R->value;
-
                 if (v1 >= v2 && v2 >= v3) {
                     node_t *tmp = mid->next;
                     mid->next->last = mid->last;
@@ -142,12 +143,14 @@ void quick_sort_medium3(node_t **list)
                     value = v1;
                     pivot = L;
                     p = L->next;
+                    pivot->next->last = NULL;
                     pivot->next = NULL;
                 } else {
                     value = v3;
                     pivot = R;
                     p = L;
-                    R = R->last;
+                    //wrong here, last pointer
+                    pivot->last->next = NULL;
                     pivot->last = NULL;
                 }
             }
