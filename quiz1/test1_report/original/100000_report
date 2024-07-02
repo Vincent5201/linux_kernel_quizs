@@ -1,0 +1,13 @@
+# started on Tue Jul  2 16:23:26 2024
+
+
+ Performance counter stats for './test1' (10 runs):
+
+         2587,1790      branches                                                                ( +-  0.04% )
+           66,3666      cache-misses                                                            ( +-  2.26% )
+       1,6001,1078      cycles                                                                  ( +-  0.62% )
+       1,6760,6180      instructions                     #    1.05  insn per cycle              ( +-  0.04% )
+                 1      context-switches                                                        ( +- 56.17% )
+
+          0.046665 +- 0.000355 seconds time elapsed  ( +-  0.76% )
+
