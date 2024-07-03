@@ -6,17 +6,14 @@
 
 typedef struct __node {
     struct __node *left, *right;
-    struct __node *next, *last;
+    struct __node *next;
     long value;
 } node_t;
 
-void list_add(node_t *list, node_t *node_t)
+void list_add(node_t **list, node_t *node_t)
 {
-    node_t->next = list;
-    node_t->last = NULL;
-    if (list)
-        list->last = node_t;
-    list = node_t;
+    node_t->next = *list;
+    *list = node_t;
 }
 
 node_t *list_tail(node_t **left)
@@ -40,9 +37,6 @@ node_t *list_construct(node_t *list, int n)
 {
     node_t *node = malloc(sizeof(node_t));
     node->next = list;
-    if (list)
-        list->last = node;
-    node->last = NULL;
     node->value = n;
     return node;
 }
@@ -56,17 +50,6 @@ void list_free(node_t **list)
         if (node)
             node = node->next;
     }
-}
-
-node_t *list_find_mid(node_t *L, node_t *R)
-{
-    node_t* fast = L;
-    node_t* slow = L;
-    while (fast != R && fast->next != R) {
-        fast = fast->next->next;
-        slow = slow->next;
-    }
-    return slow;
 }
 
 /* Verify if list is order */
@@ -102,7 +85,7 @@ void shuffle(int *array, size_t n)
     }
 }
 
-void quick_sort_medium3(node_t **list)
+void quick_sort_rand(node_t **list)
 {
     int n = list_length(list);
     int value;
@@ -117,47 +100,28 @@ void quick_sort_medium3(node_t **list)
     while (i >= 0) {
         node_t *L = begin[i], *R = end[i];
         if (L != R) {
-            node_t *pivot;
+            node_t *pivot = L;
+            node_t *last = NULL;
             node_t *p;
-            long v1, v2, v3;
-            node_t *mid = list_find_mid(L, R);
-            v1 = L->value;
-            v2 = mid->value;
-            v3 = R->value;
-
-            if (R == mid) {
-                pivot = L;
-                p = L->next;
-                pivot->next = NULL;
-                value = pivot->value;
-            } else {
-                if (v1 >= v2 && v2 >= v3) {
-                    node_t *tmp = mid->next;
-                    mid->next->last = mid->last;
-                    mid->last->next = tmp;
-                    value = v2;
-                    pivot = mid;
-                    p = L;
-                    pivot->last = pivot->next = NULL;
-                } else if (v2 >= v1 && v1 >= v3) {
-                    value = v1;
-                    pivot = L;
-                    p = L->next;
-                    pivot->next->last = NULL;
-                    pivot->next = NULL;
-                } else {
-                    value = v3;
-                    pivot = R;
-                    p = L;
-                    pivot->last->next = NULL;
-                    pivot->last = NULL;
-                }
+            int tgt = rand() % list_length(&L);
+            while (tgt) {
+                last = pivot;
+                pivot = pivot->next;
+                tgt--;
             }
-
+            value = pivot->value;
+            if (last) {
+                p = L;
+                last->next = pivot->next;
+            } else {
+                p = pivot->next;
+            }
+            pivot->next = NULL;
+    
             while (p) {
                 node_t *n = p;
                 p = p->next;
-                list_add(n->value > value ? right : left, n);
+                list_add(n->value > value ? &right : &left, n);
             }
 
             begin[i] = left;
@@ -171,7 +135,7 @@ void quick_sort_medium3(node_t **list)
             i += 2;
         } else {
             if (L)
-                list_add(result, L);
+                list_add(&result, L);
             i--;
         }
     }
@@ -183,17 +147,18 @@ int main(int argc, char **argv)
 {
     node_t *list = NULL;
 
-    size_t count = 10;
+    size_t count = 100000;
 
     int *test_arr = malloc(sizeof(int) * count);
+
     for (int i = 0; i < count; ++i)
         test_arr[i] = i;
     shuffle(test_arr, count);
-    
+
     while (count--)
         list = list_construct(list, test_arr[count]);
     
-    quick_sort_medium3(&list);
+    quick_sort_rand(&list);
     if (list_is_ordered(list)) {
         printf("success\n");
     } else {
