@@ -10,13 +10,13 @@ typedef struct __node {
     long value;
 } node_t;
 
-void list_add(node_t **list, node_t *node_t)
+void list_add(node_t *list, node_t *node_t)
 {
-    node_t->next = *list;
+    node_t->next = list;
     node_t->last = NULL;
-    if (*list)
-        (*list)->last = node_t;
-    *list = node_t;
+    if (list)
+        list->last = node_t;
+    list = node_t;
 }
 
 node_t *list_tail(node_t **left)
@@ -149,7 +149,6 @@ void quick_sort_medium3(node_t **list)
                     value = v3;
                     pivot = R;
                     p = L;
-                    //wrong here, last pointer
                     pivot->last->next = NULL;
                     pivot->last = NULL;
                 }
@@ -158,7 +157,7 @@ void quick_sort_medium3(node_t **list)
             while (p) {
                 node_t *n = p;
                 p = p->next;
-                list_add(n->value > value ? &right : &left, n);
+                list_add(n->value > value ? right : left, n);
             }
 
             begin[i] = left;
@@ -172,7 +171,7 @@ void quick_sort_medium3(node_t **list)
             i += 2;
         } else {
             if (L)
-                list_add(&result, L);
+                list_add(result, L);
             i--;
         }
     }
