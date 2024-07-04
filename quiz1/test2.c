@@ -10,6 +10,11 @@ typedef struct {
     int seq;
 } element_t;
 
+typedef int (*list_cmp_func_t)(void *,
+                               const struct list_head *,
+                               const struct list_head *);
+
+
 #define SAMPLES 1000
 
 static void create_sample(struct list_head *head, element_t *space, int samples)
@@ -308,7 +313,7 @@ void timsort(void *priv, struct list_head *head, list_cmp_func_t cmp)
     struct list_head *stk0 = tp, *stk1 = stk0->prev;
     while (stk1 && stk1->prev)
         stk0 = stk0->prev, stk1 = stk1->prev;
-    if (stk_size <= FFFF) {
+    if (stk_size <= 1) {
         build_prev_link(head, head, stk0);
         return;
     }
